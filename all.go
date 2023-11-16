@@ -1,3 +1,7 @@
+package stemma
+
+import "encoding/xml"
+
 type Group struct {
 	Key            string           `xml:"Key,attr"`
 	Title          *string          `xml:"Title,omitempty"`
@@ -41,6 +45,13 @@ type Demise struct {
 	Eventlet []Eventlet    `xml:"Eventlet,omitempty"`
 	SplitTo  []SplitTo     `xml:"SplitTo,omitempty"`
 	TextSeg  []TextSegment `xml:"TextSegment,omitempty"`
+}
+
+type JoinFrom struct {
+	Key string `xml:"Key,attr"`
+}
+type SplitTo struct {
+	Key string `xml:"Key,attr"`
 }
 
 type Animal struct {
@@ -136,15 +147,6 @@ type Constraints struct {
 	Constraints []Constraint `xml:"Constraint"`
 }
 
-type Constraint struct {
-	AfterEvent  *string       `xml:"AfterEvent,attr,omitempty"`
-	BeforeEvent *string       `xml:"BeforeEvent,attr,omitempty"`
-	FromEvent   *string       `xml:"FromEvent,attr,omitempty"`
-	UntilEvent  *string       `xml:"UntilEvent,attr,omitempty"`
-	AtEvent     *string       `xml:"AtEvent,attr,omitempty"`
-	TextSeg     []TextSegment `xml:"TextSegment,omitempty"`
-}
-
 type Datasets struct {
 	XMLName xml.Name  `xml:"Datasets"`
 	Header  Header    `xml:"Header"`
@@ -166,10 +168,10 @@ type Product struct {
 }
 
 type Dataset struct {
-	Name               string               `xml:"Name,attr"`
-	ExtendedProperties []ExtendedProperties `xml:"EXTENDED_PROPERTIES,omitempty"`
-	Imports            []Import             `xml:"IMPORTS,omitempty"`
-	DatasetBody        []DatasetBody        `xml:",any"`
+	Name string `xml:"Name,attr"`
+	//ExtendedProperties []ExtendedProperties `xml:"EXTENDED_PROPERTIES,omitempty"`
+	//Imports            []Import             `xml:"IMPORTS,omitempty"`
+	DatasetBody []DatasetBody `xml:",any"`
 }
 
 type Content struct {
@@ -221,6 +223,16 @@ type Event struct {
 	SourceLnks     []SourceLnk      `xml:"SourceLnk,omitempty"`
 	ExternalID     *string          `xml:"ExternalID,omitempty"`
 	TextSeg        []TextSegment    `xml:"TextSegment,omitempty"`
+}
+
+type ParentEventLnk struct {
+	Key     string        `xml:"Key,attr"`
+	TextSeg []TextSegment `xml:"TextSegment,omitempty"`
+}
+
+type BaseEventLnk struct {
+	Key     string        `xml:"Key,attr"`
+	TextSeg []TextSegment `xml:"TextSegment,omitempty"`
 }
 
 type EvSourceLnk struct {
@@ -283,43 +295,16 @@ type DateRange struct {
 }
 
 type When struct {
-	Value            string            `xml:"Value,attr,omitempty"`
-	DataAttribute    string            `xml:",attr,omitempty"`
-	DateEntity       []DateEntity      `xml:"DateEntity,omitempty"`
-	EventConstraints []EventConstraint `xml:"Constraint,omitempty"`
-	TextSeg          []TextSegment     `xml:"TextSegment,omitempty"`
-}
-
-type SourceLnk struct {
-	Key             string        `xml:"Key,attr"`
-	PersonLnks      []PersonLnk   `xml:"PersonLnk,omitempty"`
-	AnimalLnks      []AnimalLnk   `xml:"AnimalLnk,omitempty"`
-	PlaceLnks       []PlaceLnk    `xml:"PlaceLnk,omitempty"`
-	GroupLnks       []GroupLnk    `xml:"GroupLnk,omitempty"`
-	EventProperties []EventLnk    `xml:"EventLnk,omitempty"`
-	TextSeg         []TextSegment `xml:"TextSegment,omitempty"`
+	Value            string        `xml:"Value,attr,omitempty"`
+	DataAttribute    string        `xml:",attr,omitempty"`
+	DateEntity       []DateEntity  `xml:"DateEntity,omitempty"`
+	EventConstraints []Constraint  `xml:"Constraint,omitempty"`
+	TextSeg          []TextSegment `xml:"TextSegment,omitempty"`
 }
 
 type PropertyDef struct {
 	Name string `xml:"Name,attr"`
 	Type string `xml:"Type,attr"`
-}
-
-type Group struct {
-	Key            string           `xml:"Key,attr"`
-	Title          *string          `xml:"Title,omitempty"`
-	Type           *string          `xml:"Type,omitempty"`
-	SubType        *string          `xml:"SubType,omitempty"`
-	NameVariants   []GroupName      `xml:"GroupName,omitempty"`
-	ParentGroupLnk []ParentGroupLnk `xml:"ParentGroupLnk,omitempty"`
-	Creation       *GroupLifeEvent  `xml:"Creation,omitempty"`
-	Demise         *GroupLifeEvent  `xml:"Demise,omitempty"`
-	Eventlets      []Eventlet       `xml:"Eventlet,omitempty"`
-	SourceLnk      []SourceLnk      `xml:"SourceLnk,omitempty"`
-	RelatedTo      []RelatedTo      `xml:"RelatedTo,omitempty"`
-	Operations     []Operation      `xml:"Operation,omitempty"`
-	ExternalID     *string          `xml:"ExternalID,omitempty"`
-	TextSeg        []TextSegment    `xml:"TextSegment,omitempty"`
 }
 
 type GroupName struct {
@@ -441,6 +426,14 @@ type Frame struct {
 	TextSeg   []TextSegment `xml:"TextSegment,omitempty"`
 }
 
+type ProtoAnimal struct {
+	DetKey  string        `xml:"DetKey,attr,omitempty"`
+	Key     *string       `xml:"Key,attr,omitempty"`
+	Title   *string       `xml:"Title,omitempty"`
+	Links   []Link        `xml:"Link,omitempty"`
+	TextSeg []TextSegment `xml:"TextSegment,omitempty"`
+}
+
 type ProtoPerson struct {
 	DetKey  string        `xml:"DetKey,attr,omitempty"`
 	Key     *string       `xml:"Key,attr,omitempty"`
@@ -519,6 +512,18 @@ type ContactDetails struct {
 	Web       []URL         `xml:"Web>URL,omitempty"`
 	Messaging []Message     `xml:"Messaging>Message,omitempty"`
 	TextSeg   []TextSegment `xml:"TextSegment,omitempty"`
+}
+
+type TextSegment struct {
+	Key           string  `xml:"Key,attr,omitempty"`
+	TextType      *string `xml:"TextType,attr,omitempty"`
+	DataAttribute *string `xml:",attr,omitempty"` // Assuming DATA_ATTRIBUTE is a placeholder for actual attribute name.
+	Title         *string `xml:"Title,omitempty"`
+	NarrativeText string  `xml:",chardata"` // The narrative text that appears as inner XML text content.
+}
+
+type FromText struct {
+	Key string `xml:"Key,attr"`
 }
 
 type Address struct {
@@ -663,4 +668,108 @@ type ParentPlaceLnk struct {
 	RangeTo   RangeTo       `xml:"RangeTo,attr,omitempty"`
 	Key       string        `xml:"Key,attr"`
 	TextSeg   []TextSegment `xml:"TextSegment,omitempty"`
+}
+
+type Resource struct {
+	Key             string           `xml:"Key,attr"`
+	Abstract        *bool            `xml:"Abstract,attr,omitempty"`
+	Title           *string          `xml:"Title,omitempty"`
+	URL             *ResourceURL     `xml:"URL,omitempty"`
+	Type            *ResourceType    `xml:"Type,omitempty"`
+	DataControl     *DataControl     `xml:"DataControl,omitempty"`
+	Params          *Params          `xml:"Params,omitempty"`
+	BaseResourceLnk *BaseResourceLnk `xml:"BaseResourceLnk,omitempty"`
+	TextSeg         []TextSegment    `xml:"TextSegment,omitempty"`
+}
+
+type ResourceURL struct {
+	ContentType string `xml:"ContentType,attr,omitempty"`
+	URL         string `xml:",chardata"`
+}
+
+type ResourceType struct {
+	Artefact *bool  `xml:"Artefact,attr,omitempty"`
+	Type     string `xml:",chardata"`
+}
+
+type DataControl struct {
+	Sensitivity *string       `xml:"Sensitivity,omitempty"`
+	Copyright   *string       `xml:"Copyright,omitempty"`
+	Permission  *string       `xml:"Permission,omitempty"`
+	Prohibition *string       `xml:"Prohibition,omitempty"`
+	Attribution *string       `xml:"Attribution,omitempty"`
+	TextSeg     []TextSegment `xml:"TextSegment,omitempty"`
+}
+
+type Params struct {
+	ParamDef   []ParamDef   `xml:"PARAM_DEF,omitempty"`
+	ParamValue []ParamValue `xml:"PARAM_VALUE,omitempty"`
+}
+
+type ParamDef struct {
+	Name         string  `xml:"Name,attr"`
+	Type         *string `xml:"Type,attr,omitempty"`
+	SemType      *string `xml:"SemType,attr,omitempty"`
+	ItemList     *bool   `xml:"ItemList,attr,omitempty"`
+	Optional     *bool   `xml:"Optional,attr,omitempty"`
+	WhereIn      *bool   `xml:"WhereIn,attr,omitempty"`
+	DefaultValue string  `xml:",chardata"`
+}
+
+type BaseResourceLnk struct {
+	Key     string        `xml:"Key,attr"`
+	TextSeg []TextSegment `xml:"TextSegment,omitempty"`
+}
+
+type Source struct {
+	Key        string         `xml:"Key,attr"`
+	Title      *string        `xml:"Title,omitempty"`
+	Frame      *Frame         `xml:"Frame,omitempty"`
+	ProtoSubj  []ProtoSubject `xml:"ProtoSub,omitempty"`
+	Commentary []Commentary   `xml:"Commentary,omitempty"`
+	Dates      []ProtoDate    `xml:"ProtoDate,omitempty"`
+	SourceLets []SourceLet    `xml:"Sourcelet,omitempty"`
+	TextSeg    []TextSegment  `xml:"TextSegment,omitempty"`
+}
+
+type Where struct {
+	DetLnk string `xml:"DetLnk,attr"`
+}
+
+type SourceLet struct {
+	Key        *string        `xml:"Key,attr,omitempty"`
+	Title      *string        `xml:"Title,omitempty"`
+	Frame      *Frame         `xml:"Frame,omitempty"`
+	ProtoSubj  []ProtoSubject `xml:"ProtoSubject,omitempty"`
+	Commentary []Commentary   `xml:"Commentary,omitempty"`
+	Dates      []ProtoDate    `xml:"ProtoDate,omitempty"`
+	TextSeg    []TextSegment  `xml:"TextSegment,omitempty"`
+}
+
+// ProtoSubject can be an interface that ProtoPerson, ProtoAnimal, ProtoPlace, ProtoGroup, ProtoEvent implement
+type ProtoSubject interface {
+	// Common methods that the prototypes would share (if any)
+	IsProtoSubject() bool
+}
+
+// Note: Similar struct definitions would exist for ProtoAnimal, ProtoPlace, ProtoGroup, ProtoEvent
+
+func (p ProtoPerson) IsProtoSubject() bool {
+	return true
+}
+
+func (p ProtoAnimal) IsProtoSubject() bool {
+	return true
+}
+
+func (p ProtoPlace) IsProtoSubject() bool {
+	return true
+}
+
+func (p ProtoEvent) IsProtoSubject() bool {
+	return true
+}
+
+func (p ProtoGroup) IsProtoSubject() bool {
+	return true
 }
