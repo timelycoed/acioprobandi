@@ -50,6 +50,7 @@ type Demise struct {
 type JoinFrom struct {
 	Key string `xml:"Key,attr"`
 }
+
 type SplitTo struct {
 	Key string `xml:"Key,attr"`
 }
@@ -162,16 +163,33 @@ type Header struct {
 }
 
 type Product struct {
-	Id      string `xml:"Id"`
-	Name    string `xml:"Name"`
-	Version string `xml:"Version"`
+	ID      string `xml:"ID"`
+	Name    string `xml:"Name,omitempty"`
+	Version string `xml:"Version,omitempty"`
 }
 
 type Dataset struct {
-	Name string `xml:"Name,attr"`
-	//ExtendedProperties []ExtendedProperties `xml:"EXTENDED_PROPERTIES,omitempty"`
-	//Imports            []Import             `xml:"IMPORTS,omitempty"`
-	DatasetBody []DatasetBody `xml:",any"`
+	Name               string               `xml:"Name,attr"`
+	ExtendedProperties []ExtendedProperties `xml:"ExtendedProperties,omitempty"`
+	Imports            []Import             `xml:"Imports,omitempty"`
+	DatasetBody        []DatasetBody        `xml:",any"`
+}
+
+type Import struct {
+	Entities []EntityType `xml:"entity-type"`
+}
+
+type EntityType struct {
+	Key      string `xml:"Key,attr"`
+	Abstract *bool  `xml:"Abstract,attr,omitempty"`
+}
+
+type ExtendedProperties struct {
+	PersonProperties []PropertyDef `xml:"PersonProperties>PropertyDef,omitempty"`
+	PlaceProperties  []PropertyDef `xml:"PlaceProperties>PropertyDef,omitempty"`
+	GroupProperties  []PropertyDef `xml:"GroupProperties>PropertyDef,omitempty"`
+	AnimalProperties []PropertyDef `xml:"AnimalProperties>PropertyDef,omitempty"`
+	EventProperties  []PropertyDef `xml:"EventProperties>PropertyDef,omitempty"`
 }
 
 type Content struct {
@@ -746,13 +764,10 @@ type SourceLet struct {
 	TextSeg    []TextSegment  `xml:"TextSegment,omitempty"`
 }
 
-// ProtoSubject can be an interface that ProtoPerson, ProtoAnimal, ProtoPlace, ProtoGroup, ProtoEvent implement
 type ProtoSubject interface {
 	// Common methods that the prototypes would share (if any)
 	IsProtoSubject() bool
 }
-
-// Note: Similar struct definitions would exist for ProtoAnimal, ProtoPlace, ProtoGroup, ProtoEvent
 
 func (p ProtoPerson) IsProtoSubject() bool {
 	return true
@@ -772,4 +787,50 @@ func (p ProtoEvent) IsProtoSubject() bool {
 
 func (p ProtoGroup) IsProtoSubject() bool {
 	return true
+}
+
+// Builder structs and functions for the above core structs
+
+type JoinFromBuilder struct {
+	key string
+}
+
+type ProductBuilder struct {
+	id      string
+	name    string
+	version string
+}
+
+func (b *ProductBuilder) SetID(id string) *ProductBuilder {
+	b.id = id
+	return b
+}
+
+func (b *ProductBuilder) SetName(name string) *ProductBuilder {
+	b.name = name
+	return b
+}
+
+func (b *ProductBuilder) SetVersion(version string) *ProductBuilder {
+	b.version = version
+	return b
+}
+
+func (b *JoinFromBuilder) SetKey(key string) *JoinFromBuilder {
+	b.key = key
+	return b
+}
+
+func (b *JoinFromBuilder) Build() *JoinFrom {
+	return &JoinFrom{
+		Key: b.key,
+	}
+}
+
+func (b *ProductBuilder) Build() *Product {
+	return &Product{
+		ID:      b.id,
+		Name:    b.name,
+		Version: b.version,
+	}
 }
